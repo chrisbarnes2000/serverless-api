@@ -29,34 +29,34 @@ serverless deploy
 
 ### Invocation
 
-After successful deployment, you can create a new user by calling the corresponding endpoint:
+After successful deployment, you can create a new entry log by calling the corresponding endpoint:
 
 ```zsh
-curl --request POST 'https://xxxxxx.execute-api.us-east-1.amazonaws.com/dev/users' --header 'Content-Type: application/json' --data-raw '{"name": "John", "userId": "someUserId"}'
+curl --request POST 'https://xxxxxx.execute-api.us-east-1.amazonaws.com/dev/entrylogs' --header 'Content-Type: application/json' --data-raw '{"name": "John", "entrylogID": "someEntrylogID"}'
 ```
 
 Which should result in the following response:
 
 ```zsh
-{"userId":"someUserId","name":"John"}
+{"entrylogID":"someEntrylogID","name":"John"}
 ```
 
-You can later retrieve the user by `userId` by calling the following endpoint:
+You can later retrieve the entry log by `entrylogID` by calling the following endpoint:
 
 ```zsh
-curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/dev/users/someUserId
+curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/dev/entrylogs/someEntrylogID
 ```
 
 Which should result in the following response:
 
 ```zsh
-{"userId":"someUserId","name":"John"}
+{"entrylogID":"someEntrylogID","name":"John"}
 ```
 
-If you try to retrieve user that does not exist, you should receive the following response:
+If you try to retrieve entry log that does not exist, you should receive the following response:
 
 ```zsh
-{"error":"Could not find user with provided \"userId\""}
+{"error":"Could not find entry log with provided \"entrylogID\""}
 ```
 
 <!-- 
@@ -75,10 +75,10 @@ serverless dev
 
 ## Resources
 
-[Serverless Components]: https://github.com/serverless/components
-[Austen Collins - Serverless Express]: https://www.serverless.com/blog/serverless-express-apis-aws-lambda-http-api
-[Brian Neisler - what-are-serverless-components-how-use]: https://www.serverless.com/blog/what-are-serverless-components-how-use
+[Serverless Components](https://github.com/serverless/components)
+[Austen Collins - Serverless Express](https://www.serverless.com/blog/serverless-express-apis-aws-lambda-http-api)
+[Brian Neisler - what-are-serverless-components-how-use](https://www.serverless.com/blog/what-are-serverless-components-how-use)
 
-<!-- To learn more about the capabilities of `serverless-offline` and `serverless-dynamodb-local`, please refer to their corresponding GitHub repositories: -->
-<!-- [Serverless offline]: https://github.com/dherault/serverless-offline -->
-<!-- [Serverless dynamodb-local]: https://github.com/99x/serverless-dynamodb-local -->
+To learn more about the capabilities of `serverless-offline` and `serverless-dynamodb-local`, please refer to their corresponding GitHub repositories:
+[Serverless offline](https://github.com/dherault/serverless-offline)
+[Serverless dynamodb-local](https://github.com/99x/serverless-dynamodb-local)
