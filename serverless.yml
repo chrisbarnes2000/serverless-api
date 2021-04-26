@@ -24,12 +24,21 @@ provider:
   environment:
     ENTRYLOGS_TABLE: ${self:custom.tableName}
 
+# Each function instance will have the same code, but they'll be segmented for metrics purposes
 functions:
   app:
     handler: index.handler
     events:
       - http: ANY /
       - http: 'ANY {proxy+}'
+  getEntrylog:
+    handler: index.handler
+    events:
+      - http: 'GET /entrylogs/{proxy+}'
+  createEntrylogs:
+    handler: index.handler
+    events:
+      - http: 'POST /entrylogs'
 
 resources:
   Resources:

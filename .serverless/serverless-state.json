@@ -114,6 +114,18 @@
               "LogGroupName": "/aws/lambda/personal-journal-express-dev-app"
             }
           },
+          "GetEntrylogLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/personal-journal-express-dev-getEntrylog"
+            }
+          },
+          "CreateEntrylogsLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/personal-journal-express-dev-createEntrylogs"
+            }
+          },
           "IamRoleLambdaExecution": {
             "Type": "AWS::IAM::Role",
             "Properties": {
@@ -201,7 +213,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/personal-journal-express/dev/1619419642888-2021-04-26T06:47:22.888Z/personal-journal-express.zip"
+                "S3Key": "serverless/personal-journal-express/dev/1619420823389-2021-04-26T07:07:03.389Z/personal-journal-express.zip"
               },
               "Handler": "index.handler",
               "Runtime": "nodejs12.x",
@@ -223,6 +235,86 @@
             "DependsOn": [
               "AppLogGroup"
             ]
+          },
+          "GetEntrylogLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/personal-journal-express/dev/1619420823389-2021-04-26T07:07:03.389Z/personal-journal-express.zip"
+              },
+              "Handler": "index.handler",
+              "Runtime": "nodejs12.x",
+              "FunctionName": "personal-journal-express-dev-getEntrylog",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "ENTRYLOGS_TABLE": "EntryLogs-Table-dev"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "GetEntrylogLogGroup"
+            ]
+          },
+          "CreateEntrylogsLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/personal-journal-express/dev/1619420823389-2021-04-26T07:07:03.389Z/personal-journal-express.zip"
+              },
+              "Handler": "index.handler",
+              "Runtime": "nodejs12.x",
+              "FunctionName": "personal-journal-express-dev-createEntrylogs",
+              "MemorySize": 1024,
+              "Timeout": 6,
+              "Environment": {
+                "Variables": {
+                  "ENTRYLOGS_TABLE": "EntryLogs-Table-dev"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "CreateEntrylogsLogGroup"
+            ]
+          },
+          "GetEntrylogLambdaVersionJ0JxhfEbUyHnA4QCUn1NRustUz4vUi5QfuiLJS5AK7U": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "GetEntrylogLambdaFunction"
+              },
+              "CodeSha256": "vyhrd/xGc6tondh7WKfX68aeUq4wOkM/6SfDc8lb0GI="
+            }
+          },
+          "CreateEntrylogsLambdaVersionKdkQzaNdt8tY9KQuhdJgJj3sFz6nv1Nw1m4Sawz8": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "CreateEntrylogsLambdaFunction"
+              },
+              "CodeSha256": "vyhrd/xGc6tondh7WKfX68aeUq4wOkM/6SfDc8lb0GI="
+            }
           },
           "AppLambdaVersion72wS4UV5GlR5ihCKaq130m4jrjyxKmrX4HHuaIALl4": {
             "Type": "AWS::Lambda::Version",
@@ -254,6 +346,33 @@
                   "ApiGatewayRestApi",
                   "RootResourceId"
                 ]
+              },
+              "PathPart": "{proxy+}",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceEntrylogs": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "entrylogs",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceEntrylogsProxyVar": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceEntrylogs"
               },
               "PathPart": "{proxy+}",
               "RestApiId": {
@@ -350,7 +469,93 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1619419638727": {
+          "ApiGatewayMethodEntrylogsProxyVarGet": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "GET",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceEntrylogsProxyVar"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "GetEntrylogLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            }
+          },
+          "ApiGatewayMethodEntrylogsPost": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "POST",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceEntrylogs"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "CreateEntrylogsLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            }
+          },
+          "ApiGatewayDeployment1619420818810": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -360,7 +565,9 @@
             },
             "DependsOn": [
               "ApiGatewayMethodAny",
-              "ApiGatewayMethodProxyVarAny"
+              "ApiGatewayMethodProxyVarAny",
+              "ApiGatewayMethodEntrylogsProxyVarGet",
+              "ApiGatewayMethodEntrylogsPost"
             ]
           },
           "AppLambdaPermissionApiGateway": {
@@ -369,6 +576,80 @@
               "FunctionName": {
                 "Fn::GetAtt": [
                   "AppLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "GetEntrylogLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "GetEntrylogLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "CreateEntrylogsLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "CreateEntrylogsLambdaFunction",
                   "Arn"
                 ]
               },
@@ -430,6 +711,24 @@
             },
             "Export": {
               "Name": "sls-personal-journal-express-dev-ServerlessDeploymentBucketName"
+            }
+          },
+          "GetEntrylogLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "GetEntrylogLambdaVersionJ0JxhfEbUyHnA4QCUn1NRustUz4vUi5QfuiLJS5AK7U"
+            },
+            "Export": {
+              "Name": "sls-personal-journal-express-dev-GetEntrylogLambdaFunctionQualifiedArn"
+            }
+          },
+          "CreateEntrylogsLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "CreateEntrylogsLambdaVersionKdkQzaNdt8tY9KQuhdJgJj3sFz6nv1Nw1m4Sawz8"
+            },
+            "Export": {
+              "Name": "sls-personal-journal-express-dev-CreateEntrylogsLambdaFunctionQualifiedArn"
             }
           },
           "AppLambdaFunctionQualifiedArn": {
@@ -575,6 +874,36 @@
         "runtime": "nodejs12.x",
         "vpc": {},
         "versionLogicalId": "AppLambdaVersion72wS4UV5GlR5ihCKaq130m4jrjyxKmrX4HHuaIALl4"
+      },
+      "getEntrylog": {
+        "handler": "index.handler",
+        "events": [
+          {
+            "http": "GET /entrylogs/{proxy+}"
+          }
+        ],
+        "name": "personal-journal-express-dev-getEntrylog",
+        "package": {},
+        "memory": 1024,
+        "timeout": 6,
+        "runtime": "nodejs12.x",
+        "vpc": {},
+        "versionLogicalId": "GetEntrylogLambdaVersionJ0JxhfEbUyHnA4QCUn1NRustUz4vUi5QfuiLJS5AK7U"
+      },
+      "createEntrylogs": {
+        "handler": "index.handler",
+        "events": [
+          {
+            "http": "POST /entrylogs"
+          }
+        ],
+        "name": "personal-journal-express-dev-createEntrylogs",
+        "package": {},
+        "memory": 1024,
+        "timeout": 6,
+        "runtime": "nodejs12.x",
+        "vpc": {},
+        "versionLogicalId": "CreateEntrylogsLambdaVersionKdkQzaNdt8tY9KQuhdJgJj3sFz6nv1Nw1m4Sawz8"
       }
     },
     "resources": {
@@ -628,7 +957,7 @@
     "artifact": "/Users/ChrisBarnes/Dev/Courses/BEW/BEW_2.1/personal-journal-express/.serverless/personal-journal-express.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/personal-journal-express/dev/1619419642888-2021-04-26T06:47:22.888Z",
+    "artifactDirectoryName": "serverless/personal-journal-express/dev/1619420823389-2021-04-26T07:07:03.389Z",
     "artifact": "personal-journal-express.zip"
   }
 }
