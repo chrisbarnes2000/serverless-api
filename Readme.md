@@ -75,10 +75,11 @@ serverless dev
 
 ## Resources
 
-[Serverless Components](https://github.com/serverless/components)
-[Austen Collins - Serverless Express](https://www.serverless.com/blog/serverless-express-apis-aws-lambda-http-api)
-[Brian Neisler - what-are-serverless-components-how-use](https://www.serverless.com/blog/what-are-serverless-components-how-use)
+- [Serverless Components](https://github.com/serverless/components)
+- [Austen Collins - Serverless Express](https://www.serverless.com/blog/serverless-express-apis-aws-lambda-http-api)
+- [Brian Neisler - what-are-serverless-components-how-use](https://www.serverless.com/blog/what-are-serverless-components-how-use)
 
 To learn more about the capabilities of `serverless-offline` and `serverless-dynamodb-local`, please refer to their corresponding GitHub repositories:
-[Serverless offline](https://github.com/dherault/serverless-offline)
-[Serverless dynamodb-local](https://github.com/99x/serverless-dynamodb-local)
+
+- [Serverless offline](https://github.com/dherault/serverless-offline)
+- [Serverless dynamodb-local](https://github.com/99x/serverless-dynamodb-local)
