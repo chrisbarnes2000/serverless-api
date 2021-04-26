@@ -2,11 +2,27 @@
 
 service: personal-journal-express
 
+custom:
+  tableName: 'EntryLogs-Table-${self:provider.stage}'
+
 provider:
   name: aws
   runtime: nodejs12.x
   stage: dev
   region: us-east-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - { "Fn::GetAtt": ["EntrylogsDynamoDBTable", "Arn" ] }
+  environment:
+    ENTRYLOGS_TABLE: ${self:custom.tableName}
 
 functions:
   app:
@@ -14,3 +30,21 @@ functions:
     events:
       - http: ANY /
       - http: 'ANY {proxy+}'
+
+resources:
+  Resources:
+    EntrylogsDynamoDBTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: entrylogID
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: entrylogID
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:custom.tableName}
