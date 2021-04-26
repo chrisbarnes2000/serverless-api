@@ -1,26 +1,31 @@
 # serverless.yml
 
+org: chrisbarnes2000
+name: personal-journal-express
 service: personal-journal-express
 
 custom:
   tableName: 'EntryLogs-Table-${self:provider.stage}'
+  domain: habitualhabits.club
 
 provider:
   name: aws
   runtime: nodejs12.x
   stage: dev
   region: us-east-1
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:Query
-        - dynamodb:Scan
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
-      Resource:
-        - { "Fn::GetAtt": ["EntrylogsDynamoDBTable", "Arn" ] }
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - { "Fn::GetAtt": ["EntrylogsDynamoDBTable", "Arn" ] }
   environment:
     ENTRYLOGS_TABLE: ${self:custom.tableName}
 
@@ -46,12 +51,10 @@ resources:
       Type: 'AWS::DynamoDB::Table'
       Properties:
         AttributeDefinitions:
-          -
-            AttributeName: entrylogID
+          - AttributeName: entrylogID
             AttributeType: S
         KeySchema:
-          -
-            AttributeName: entrylogID
+          - AttributeName: entrylogID
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1

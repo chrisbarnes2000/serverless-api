@@ -7,7 +7,12 @@ const app = express();
 const AWS = require("aws-sdk");
 
 const ENTRYLOGS_TABLE = process.env.ENTRYLOGS_TABLE;
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
+const dynamoDbClientParams = {};
+if (process.env.IS_OFFLINE) {
+  dynamoDbClientParams.region = "localhost";
+  dynamoDbClientParams.endpoint = "http://localhost:8000";
+}
+const dynamoDb = new AWS.DynamoDB.DocumentClient(dynamoDbClientParams);
 
 app.use(bodyParser.json({ strict: false }));
 
@@ -29,7 +34,7 @@ app.get("/entrylogs/:entrylogID", function (req, res) {
       console.log(error);
       res.status(400).json({ error: "Could not get entry log" });
     }
-    if (result.Item) {
+    if (result && result.Item) {
       const { entrylogID, name } = result.Item;
       res.json({ entrylogID, name });
     } else {
@@ -38,12 +43,30 @@ app.get("/entrylogs/:entrylogID", function (req, res) {
   });
 });
 
+// Get all users endpoint
+app.get("/entrylogs/", function (req, res) {
+  const params = {
+    TableName: ENTRYLOGS_TABLE,
+    Limit: 3000,
+  };
+
+  dynamoDb.scan(params, (error, result) => {
+    if (error) {
+      console.log(error);
+      res.status(400).json({ error: "Could not get all entry logs" });
+    }
+    if (result) {
+      res.json(result);
+    }
+  });
+});
+
 // Create Entry Log Endpoint
-app.post('/entrylogs', function (req, res) {
+app.post("/entrylogs", function (req, res) {
   const { entrylogID, name } = req.body;
-  if (typeof entrylogID !== 'string') {
+  if (typeof entrylogID !== "string") {
     res.status(400).json({ error: '"entrylogID" must be a string' });
-  } else if (typeof name !== 'string') {
+  } else if (typeof name !== "string") {
     res.status(400).json({ error: '"name" must be a string' });
   }
 
@@ -58,10 +81,16 @@ app.post('/entrylogs', function (req, res) {
   dynamoDb.put(params, (error) => {
     if (error) {
       console.log(error);
-      res.status(400).json({ error: 'Could not create entry log' });
+      res.status(400).json({ error: "Could not create entry log" });
     }
     res.json({ entrylogID, name });
   });
-})
+});
+
+app.use((req, res, next) => {
+  return res.status(404).json({
+    error: "Not Found",
+  });
+});
 
 module.exports.handler = serverless(app);
