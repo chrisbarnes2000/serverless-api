@@ -17,7 +17,7 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient(dynamoDbClientParams);
 app.use(bodyParser.json({ strict: false }));
 
 app.get("/", function (req, res) {
-  res.send("Hello World!");
+  res.send(`Hello World! Request \n\nreceived: ${req.method} - ${req.path}`);
 });
 
 // Get Entry Log Endpoint
@@ -91,6 +91,12 @@ app.use((req, res, next) => {
   return res.status(404).json({
     error: "Not Found",
   });
+});
+
+// Error handler
+app.use((err, req, res) => {
+  console.error(err);
+  res.status(500).send("Internal Serverless Error");
 });
 
 module.exports.handler = serverless(app);

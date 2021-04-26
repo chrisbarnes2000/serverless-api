@@ -1,3 +1,8 @@
+.DS_Store
+jest/*
+coverage
 node_modules/
 .dynamodb/
 .serverless/
+build/
+.env*

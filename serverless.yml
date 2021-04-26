@@ -1,7 +1,6 @@
 # serverless.yml
 
 org: chrisbarnes2000
-name: personal-journal-express
 service: personal-journal-express
 
 custom:
